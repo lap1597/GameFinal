@@ -1,8 +1,8 @@
 package GameFile;
 
 public class GameConstants {
-    public static  int WORLD_WIDTH = 2048;
-    public static  int WORLD_HEIGHT = 1532;
+    public static final  int WORLD_WIDTH = 2048;
+    public static final int WORLD_HEIGHT = 1536;
     public static final int GAME_SCREEN_WIDTH = 1280;
     public static final int GAME_SCREEN_HEIGHT = 960;
 
