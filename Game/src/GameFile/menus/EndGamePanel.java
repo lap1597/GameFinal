@@ -35,10 +35,16 @@ public class EndGamePanel extends JPanel {
         this.add(exit);
 
     }
-
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g); // Ensure the panel's children are rendered
         Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(this.menuBackground, 0, 0, null);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        if (menuBackground != null) {
+            int panelWidth = this.getWidth();
+            int panelHeight = this.getHeight();
+            g2.drawImage(menuBackground, 0, 0, panelWidth, panelHeight, null);
+        }
     }
 }

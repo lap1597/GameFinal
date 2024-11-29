@@ -1,13 +1,14 @@
 package GameFile.game;
 
 import GameFile.utils.AssetManager;
-
+import java.util.List;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public abstract class GameObject {
     protected int x, y;
     protected BufferedImage img;
+    protected List<BufferedImage> animation;
     protected boolean hasCollided = false;
     protected boolean wallCollision = false;
     protected Rectangle hitbox;
@@ -17,6 +18,13 @@ public abstract class GameObject {
         this.img = img;
         this.hitbox = new Rectangle((int)x, (int)y, img.getWidth()/2, img.getHeight()/2);
     }
+    public GameObject(int x, int y,List<BufferedImage> img) {
+        this.x = x;
+        this.y = y;
+        this.animation = img;
+        this.hitbox = new Rectangle((int)x, (int)y, animation.get(0).getWidth(), animation.get(0).getHeight());
+    }
+
     public static GameObject newInstance(String type, int x, int y) {
 
 

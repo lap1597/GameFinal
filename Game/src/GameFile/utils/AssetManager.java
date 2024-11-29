@@ -1,9 +1,10 @@
 package GameFile.utils;
 
 import GameFile.game.GameWorld;
+import GameFile.game.Sound;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.Clip;
+import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 public class AssetManager {
     private static final Map<String, BufferedImage> sprites = new HashMap<>();
-    private static final Map<String, Clip> sound = new HashMap<>();
+    private static final Map<String, Sound> sound = new HashMap<>();
     private static final Map<String, List<BufferedImage>> animation = new HashMap<>();
 
     private static BufferedImage loadImage(final String path) throws IOException {
@@ -24,17 +25,29 @@ public class AssetManager {
                         "Could not find %s".formatted(path)));
 
     }
+    private static Sound loadClip(String path) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+        AudioInputStream ais = AudioSystem.getAudioInputStream(
+                Objects.requireNonNull(
+                        AssetManager.class.getClassLoader().getResource(path),
+                        "Sound Resource %s was not found".formatted(path)
+                ));
+        Clip c = AudioSystem.getClip();
+        c.open(ais);
+        Sound s = new Sound(c);
+        return s;
+    }
     private static void loadSprites(){
         try{
-        AssetManager.sprites.put("tank1", loadImage("animations/Dog/stand/stand1.png"));
+         AssetManager.sprites.put("bg", loadImage("maps/bg.png"));
+        AssetManager.sprites.put("dog", loadImage("animations/Dog/stand/stand1.png"));
+        AssetManager.sprites.put("cat", loadImage("animations/Cat/stand/cstand.png"));
         AssetManager.sprites.put("tank2", loadImage("tank/tank2.png"));
-
-        AssetManager.sprites.put("menu", loadImage("menu/title.png"));
-
+        AssetManager.sprites.put("menu", loadImage("menu/dogvscat.png"));
         AssetManager.sprites.put("bullet", loadImage("bullet/bullet.jpg"));
-        //Floor
+
+            //Floor
         AssetManager.sprites.put("floor", loadImage("floor/bg.bmp"));
-        AssetManager.sprites.put("bg", loadImage("floor/floor2.png"));
+      //  AssetManager.sprites.put("bg", loadImage("floor/floor2.png"));
 
         AssetManager.sprites.put("g1", loadImage("floor/grass1.png"));
         AssetManager.sprites.put("g2", loadImage("floor/grass2.png"));
@@ -101,25 +114,51 @@ public class AssetManager {
         AssetManager.sprites.put("break13", loadImage("wall/tile013.png"));
         AssetManager.sprites.put("break14", loadImage("wall/tile014.png"));
         AssetManager.sprites.put("break15", loadImage("wall/tile015.png"));
+
+
+        //Bullet type1
+        AssetManager.sprites.put("bull1t1", loadImage("bullet/bull1t1.png"));
+        AssetManager.sprites.put("bull2t1", loadImage("bullet/bull2t1.png"));
+        AssetManager.sprites.put("bull3t1", loadImage("bullet/bull3t1.png"));
+        AssetManager.sprites.put("bull4t1", loadImage("bullet/bull4t1.png"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     private static void loadSound(){
+        //Sound
+        try {
+            AssetManager.sound.put("bgSound", loadClip("sounds/s6.wav"));
+            AssetManager.sound.put("shootSound", loadClip("sounds/shotfiring.wav"));
+
+            AssetManager.sound.put("pk", loadClip("sounds/pickupItem.wav"));
+
+            AssetManager.sound.put("doglose", loadClip("sounds/doglose.wav"));
+            AssetManager.sound.put("cat", loadClip("sounds/catlose.wav"));
+        }catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
 
     }
     private static void loadAnimation(){
         try {
             // Load the stand
             List<BufferedImage> dogStand = List.of(
-                    loadImage("animations/Dog/stand/stand1.png"),
-                    loadImage("animations/Dog/stand/stand2.png"),
-                    loadImage("animations/Dog/stand/stand3.png"),
-                    loadImage("animations/Dog/stand/stand4.png")
+                    loadImage("animations/Dog/stand/stand1.png")
+
             );
 
+
             animation.put("dogStand", dogStand);
-            // Load the walk
+            // Load the c stand
+            List<BufferedImage> catStand = List.of(
+                    loadImage("animations/Cat/stand/cstand.png")
+
+            );
+
+
+            animation.put("catStand", catStand);
+            // Load the  d walk
             List<BufferedImage> dogWalk = List.of(
                     loadImage("animations/Dog/walk/walk1.png"),
                     loadImage("animations/Dog/walk/walk2.png"),
@@ -132,9 +171,22 @@ public class AssetManager {
 
             );
             animation.put("dogWalk", dogWalk);
+            // Load the c walk
+            List<BufferedImage> catWalk = List.of(
+                    loadImage("animations/Cat/walk/cwalk1.png"),
+                    loadImage("animations/Cat/walk/cwalk2.png"),
+                    loadImage("animations/Cat/walk/cwalk3.png"),
+                    loadImage("animations/Cat/walk/cwalk4.png"),
+                    loadImage("animations/Cat/walk/cwalk5.png"),
+                    loadImage("animations/Cat/walk/cwalk6.png"),
+                    loadImage("animations/Cat/walk/cwalk7.png"),
+                    loadImage("animations/Cat/walk/cwalk8.png")
+
+            );
+            animation.put("catWalk", catWalk);
+
             //Load the shoot
             List<BufferedImage> dogShoot = List.of(
-                    loadImage("animations/Dog/shoot/shoot.png"),
                     loadImage("animations/Dog/shoot/shoot1.png"),
                     loadImage("animations/Dog/shoot/shoot2.png"),
                     loadImage("animations/Dog/shoot/shoot3.png"),
@@ -143,8 +195,37 @@ public class AssetManager {
                     loadImage("animations/Dog/shoot/shoot6.png"),
                     loadImage("animations/Dog/shoot/shoot7.png")
 
+
             );
             animation.put("dogShoot", dogShoot);
+            //Load the c shoot
+            List<BufferedImage> catShoot = List.of(
+                    loadImage("animations/Cat/shoot/shoot1.png"),
+                    loadImage("animations/Cat/shoot/shoot2.png"),
+                    loadImage("animations/Cat/shoot/shoot3.png"),
+                    loadImage("animations/Cat/shoot/shoot4.png"),
+                    loadImage("animations/Cat/shoot/shoot5.png"),
+                    loadImage("animations/Cat/shoot/shoot6.png"),
+                    loadImage("animations/Cat/shoot/shoot7.png")
+
+            );
+            animation.put("catShoot", catShoot);
+
+            List<BufferedImage> bullt1 = List.of(
+                    loadImage("bullet/bull1t2.png"),
+                    loadImage("bullet/bull2t2.png"),
+                    loadImage("bullet/bull3t2.png"),
+                    loadImage("bullet/bull4t2.png")
+
+            );
+            animation.put("bullt1", bullt1);
+
+            List<BufferedImage> t1collision = List.of(
+                    loadImage("animations/bullethit/t2c1.png"),
+                    loadImage("animations/bullethit/t2c2.png"),
+                    loadImage("animations/bullethit/t2c3.png")
+            );
+            animation.put("t1collision", t1collision);
 
 
 
@@ -169,6 +250,12 @@ public class AssetManager {
             throw new RuntimeException("Key not found %s".formatted(key));
         }
         return sprites.get(key);
+    }
+    public static Sound getSound(String key){
+        if(!sound.containsKey(key)){
+            throw new RuntimeException("Key not found %s".formatted(key));
+        }
+        return sound.get(key);
     }
 
     public static void loadAssets(){
