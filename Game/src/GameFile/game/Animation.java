@@ -14,13 +14,14 @@ public class Animation {
     private int currentFrame = 0;
     private boolean running = true;
 
-    public Animation(float x, float y) {
+    public Animation(float x, float y, List<BufferedImage> frames) {
         this.x = x;
         this.y = y;
-        this.frames = AssetManager.getAnimation("t1collision");
+        this.frames = frames;
         this.running = true;
         this.currentFrame = 0;
     }
+
 
     // Update the animation frames
     public void update() {

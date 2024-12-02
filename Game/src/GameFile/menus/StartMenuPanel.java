@@ -76,7 +76,6 @@ public class StartMenuPanel extends JPanel {
         All: 
         - Collect bags will increase your health, speed, and damage.
        
-
         Good luck and have fun!
         """;
             JOptionPane.showMessageDialog(this, instructions,

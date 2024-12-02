@@ -40,8 +40,8 @@ public class GameWorld extends JPanel implements Runnable {
 
     @Override
     public void run() {
+        resetGame();
         try {
-
             while (true) {
 
                 this.tick++;
@@ -58,13 +58,16 @@ public class GameWorld extends JPanel implements Runnable {
 
                 if(t1.getLife().getCounter() == 0){
                     System.out.println("Cat win!");
+
+                    this.lf.updateEndGamePanel(AssetManager.getSprite("catWin"));
                     lf.setFrame("end");
-                    //this.lf.updateEndGamePanel();
                     break;
                 }else if(t2.getLife().getCounter() == 0){
                     System.out.println("Dog win!");
+
+                    this.lf.updateEndGamePanel(AssetManager.getSprite("dogWin"));
                     lf.setFrame("end");
-                  //  this.lf.updateEndGamePanel(); // updates text
+
                     break;
                 }
 
@@ -83,11 +86,41 @@ public class GameWorld extends JPanel implements Runnable {
      * Reset game to its initial state.
      */
     public void resetGame() {
+        // Reset tick counter
         this.tick = 0;
-        this.t1.setX();
-        this.t1.setY();
-        this.t2.setX();
-        this.t2.setY();
+
+        // Clear all game objects
+        this.gObj.clear();
+
+        // Reset player lives
+        t1.getLife().setCounter(3); // Reset to initial lives (example: 3 lives)
+        t2.getLife().setCounter(3);
+
+        // Reset player states
+        t1.setX(); // Reset to initial X position
+        t1.setY(); // Reset to initial Y position
+        t1.setHealth(100); // Reset health
+        t1.setSpeed(0.5f); // Reset speed
+        t1.setDamage(5);
+
+        t2.setX(); // Reset to initial X position
+        t2.setY(); // Reset to initial Y position
+        t2.setHealth(100); // Reset health
+        t2.setSpeed(0.5f); // Reset speed
+        t1.setDamage(5);
+        // Reload game objects (map, collectibles, obstacles)
+        this.gObj = MapLoader.loadMapObjects("level1");
+
+        // Re-add players to the game object list
+        this.gObj.add(t1);
+        this.gObj.add(t2);
+
+        // Reset the game view, if applicable
+        this.repaint();
+
+
+
+
     }
 
 
@@ -157,13 +190,13 @@ public class GameWorld extends JPanel implements Runnable {
         for (int i = 0; i < this.gObj.size(); i++) {
             GameObject obj1 = this.gObj.get(i);
             for (int j = 0; j < this.gObj.size(); j++) {
-                if (i == j) continue; // so you dont collide with yourself (tank) constantly
+                if (i == j) continue; // avoid colliding with yourself
 
                 if (obj1 instanceof Player) {
                     GameObject obj2 = this.gObj.get(j);
                     if (obj1.getHitbox().intersects(obj2.getHitbox())) {
 
-                        obj1.handleCollision(obj2); // handles object hit inside Tank
+                        obj1.handleCollision(obj2);
 
                     }
                 }

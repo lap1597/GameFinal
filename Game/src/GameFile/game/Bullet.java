@@ -15,6 +15,7 @@ public class Bullet extends GameObject implements Tracking{
     private float angle;
     private float speed = 2;
     private int ownerID;
+    private int damage;
     private boolean stopped= false;
     private boolean exploding = false;
 
@@ -26,11 +27,13 @@ public class Bullet extends GameObject implements Tracking{
     private int currentFrameIndex = 0;
     private int animationSpeed = 10; // Frames to wait before switching to the next image
     private int frameCounter = 0;
+
     public Bullet(int x, int y, List<BufferedImage> animationFrames) {
         super(x, y,  animationFrames);
         this.x = x;
         this.y = y;
         this.animationFrames = animationFrames;
+
     }
 
     // Update the position of the bullet based on its angle
@@ -60,13 +63,18 @@ public class Bullet extends GameObject implements Tracking{
     }
 
 
-
     public void setOwner(int id) {
         this.ownerID = id;
     }
 
     public int getOwner() {
         return this.ownerID;
+    }
+    public int getDamage() {
+        return this.damage;
+    }
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     // Set the initial shooting position and angle
@@ -84,7 +92,7 @@ public class Bullet extends GameObject implements Tracking{
             this.speed = 0;
 
             // Initialize explosion animation
-            explosionAnimation = new Animation(x, y);
+            explosionAnimation = new Animation(x, y, AssetManager.getAnimation("t1collision"));
 
             if (o instanceof Breakable) {
                 o.setHasCollided(); // Handle breakable object-specific collision

@@ -8,6 +8,7 @@ import GameFile.utils.AssetManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 public class Launcher {
 
@@ -97,11 +98,13 @@ public class Launcher {
     public void closeGame(){
         this.jf.dispatchEvent(new WindowEvent(this.jf, WindowEvent.WINDOW_CLOSING));
     }
-
+    public void updateEndGamePanel(BufferedImage img) { // updates endgamepanel so winner isnt null
+        EndGamePanel endPanel = (EndGamePanel) this.mainPanel.getComponent(2);
+        endPanel.winner(img);
+    }
     public static void main(String[] args) {
         AssetManager.loadAssets();
         (new Launcher()).initUIComponents();
-
 
     }
 }

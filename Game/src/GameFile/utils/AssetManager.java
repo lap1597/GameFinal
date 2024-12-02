@@ -26,15 +26,15 @@ public class AssetManager {
 
     }
     private static Sound loadClip(String path) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
-        AudioInputStream ais = AudioSystem.getAudioInputStream(
+        AudioInputStream audioIn  = AudioSystem.getAudioInputStream(
                 Objects.requireNonNull(
                         AssetManager.class.getClassLoader().getResource(path),
                         "Sound Resource %s was not found".formatted(path)
                 ));
-        Clip c = AudioSystem.getClip();
-        c.open(ais);
-        Sound s = new Sound(c);
-        return s;
+        Clip clip  = AudioSystem.getClip();
+        clip .open(audioIn);
+
+        return new Sound(clip);
     }
     private static void loadSprites(){
         try{
@@ -43,6 +43,8 @@ public class AssetManager {
         AssetManager.sprites.put("cat", loadImage("animations/Cat/stand/cstand.png"));
         AssetManager.sprites.put("tank2", loadImage("tank/tank2.png"));
         AssetManager.sprites.put("menu", loadImage("menu/dogvscat.png"));
+        AssetManager.sprites.put("dogWin", loadImage("menu/dogWin.png"));
+        AssetManager.sprites.put("catWin", loadImage("menu/catWin.png"));
         AssetManager.sprites.put("bullet", loadImage("bullet/bullet.jpg"));
 
             //Floor
@@ -133,8 +135,8 @@ public class AssetManager {
 
             AssetManager.sound.put("pk", loadClip("sounds/pickupItem.wav"));
 
-            AssetManager.sound.put("doglose", loadClip("sounds/doglose.wav"));
-            AssetManager.sound.put("cat", loadClip("sounds/catlose.wav"));
+//            AssetManager.sound.put("loseSound", loadClip("sounds/die.wav"));
+
         }catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             throw new RuntimeException(e);
         }
@@ -226,10 +228,25 @@ public class AssetManager {
                     loadImage("animations/bullethit/t2c3.png")
             );
             animation.put("t1collision", t1collision);
+        //
+            List<BufferedImage> catDeath = List.of(
+                    loadImage("animations/Cat/catDie/catd1.png"),
+                    loadImage("animations/Cat/catDie/catd2.png"),
+                    loadImage("animations/Cat/catDie/catd3.png"),
+                    loadImage("animations/Cat/catDie/catd4.png"),
+                    loadImage("animations/Cat/catDie/catd5.png")
+            );
+//
+            animation.put("catDeath", catDeath);
+            List<BufferedImage> dogDeath = List.of(
+                    loadImage("animations/Dog/dogDie/dogd1.png"),
+                    loadImage("animations/Dog/dogDie/dogd2.png"),
+                    loadImage("animations/Dog/dogDie/dogd3.png"),
+                    loadImage("animations/Dog/dogDie/dogd4.png"),
+                    loadImage("animations/Dog/dogDie/dogd5.png")
+            );
 
-
-
-
+            animation.put("dogDeath", dogDeath);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to load animations", e);

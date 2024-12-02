@@ -24,6 +24,8 @@ public class Player extends GameObject implements Tracking {
     private List<BufferedImage> standingAnimation;
     private List<BufferedImage> walkingAnimation;
     private List<BufferedImage> shootAnimation;
+    private List<BufferedImage> dieAnimation;
+
     private int currentFrame = 0;
     private int frameCounter = 0;
     private int frameDelay = 15;
@@ -77,7 +79,7 @@ public class Player extends GameObject implements Tracking {
     public float getSpeed(){
         return this.speed;
     }
-    public void setSpeed( int speed){
+    public void setSpeed( float speed){
         this.speed = speed;
     }
     public void resetSpeed(){
@@ -86,9 +88,13 @@ public class Player extends GameObject implements Tracking {
     public void upgradeSpeed(){
         this.speed +=0.5f;
     }
-    public void upgradeDamage( ){
-        this.damage += 10;
+    public void upgradeDamage(){
+        this.damage +=10;
     }
+    public void setDamage(int damage){
+        this.damage = damage;
+    }
+
     public Life getLife(){
         return this.life;
     }
@@ -96,9 +102,13 @@ public class Player extends GameObject implements Tracking {
         if( playerId == 1){
             walkingAnimation = AssetManager.getAnimation("dogWalk");
             shootAnimation = AssetManager.getAnimation("dogShoot");
+            dieAnimation = AssetManager.getAnimation("dogDeath");
+
         }else{
             walkingAnimation = AssetManager.getAnimation("catWalk");
             shootAnimation = AssetManager.getAnimation("catShoot");
+            dieAnimation = AssetManager.getAnimation("catDeath");
+
         }
     }
     private int safeShootX() {
@@ -139,6 +149,7 @@ public class Player extends GameObject implements Tracking {
         Bullet newBullet = new Bullet(bX, bY, AssetManager.getAnimation("bullt1"));
         newBullet.shoot(angle);
         newBullet.setOwner(playerId);
+        newBullet.setDamage(this.damage);
         gw.addGameObject(newBullet);  // Add bullet to the GameWorld
 
     }
@@ -190,6 +201,20 @@ public class Player extends GameObject implements Tracking {
     public void update(GameWorld gw) {
         this.gw = gw;
         boolean isMoving = false;
+        if (health <= 0) {
+//           Sound lose = AssetManager.getSound("loseSound");
+//            lose.setVolume(0.5f);
+//            lose.play();
+            if (currentAnimation != dieAnimation) {
+                currentAnimation = dieAnimation;
+                currentFrame = 0;
+            }
+            // Ensure the player remains on the last frame of the dieAnimation
+            if (currentAnimation == dieAnimation && currentFrame < dieAnimation.size() - 1) {
+                updateAnimationFrame();
+            }
+            return; // Skip the rest of the update logic if the player is dead
+        }
 
         // Movement logic
         if (isShooting) {
@@ -382,8 +407,7 @@ void drawImage(Graphics g) {
             Bullet bullet = (Bullet) o;
             // If the bullet is owned by the player, ignore the collision
             if (bullet.getOwner() != this.playerId) {
-                this.health = this.health - this.damage;
-
+                this.health = this.health - bullet.getDamage();
             }
         }else if(o instanceof Speed){
             pu.setVolume(0.2f);
@@ -403,8 +427,8 @@ void drawImage(Graphics g) {
         }else if(o instanceof Damage){
             pu.setVolume(0.2f);
             pu.play();
-             upgradeDamage();
-            System.out.println("PLayer damage: "+this.damage);
+            upgradeDamage();
+            System.out.println("PLayer"+ playerId +"damage:"+ this.damage);
              o.setHasCollided();
         }
     }
@@ -415,4 +439,8 @@ void drawImage(Graphics g) {
                 : img;
         return new Rectangle((int) x, (int) y + 10, (int) currentImage.getWidth(), (int) currentImage.getHeight());
     }
+    public int getType(){
+        return playerId;
+    }
+
 }

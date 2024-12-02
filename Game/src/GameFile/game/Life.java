@@ -1,5 +1,7 @@
 package GameFile.game;
 
+import GameFile.utils.AssetManager;
+
 import java.awt.*;
 
 public class Life {
@@ -78,45 +80,4 @@ public class Life {
         }
     }
 
-//    public void draw(Graphics2D g, int x, int y) {
-//        int currentHealth = player.getHealth();
-//        float healthPercent = (float) currentHealth / maxHealth;
-//        int healthWidth = (int) (width * healthPercent);
-//
-//        g.setColor(Color.GRAY);
-//        g.fillRect(x, y, width, height);
-//
-//        g.setColor(Color.BLACK);
-//        g.drawRect(x, y, width, height);
-//
-//        if (currentHealth <= 0) {
-//            if (deathTime == -1) {
-//                deathTime = System.currentTimeMillis();
-//            }
-//            if (counter != 0) {
-//                counter--;
-//                System.out.println("lives left: "+ counter);
-//                player.setX();
-//                player.setY();
-//                player.resetHealth();
-//            } else {
-//                // end Game
-//            }
-//
-//        } else if (currentHealth == 100) { // health power up, adds health past 100
-//            g.setColor(Color.CYAN);
-//            g.fillRect(x, y, healthWidth, height);
-//        } else if (currentHealth >= 80) {
-//            g.setColor(Color.GREEN);
-//            g.fillRect(x, y, healthWidth, height);
-//        } else if (currentHealth >= 30) {
-//            g.setColor(Color.YELLOW);
-//            g.fillRect(x, y, healthWidth, height);
-//        } else if (currentHealth < 29) {
-//            g.setColor(Color.RED);
-//            g.fillRect(x, y, healthWidth, height);
-//        }
-//
-//
-//    }
 }

@@ -47,4 +47,8 @@ public class EndGamePanel extends JPanel {
             g2.drawImage(menuBackground, 0, 0, panelWidth, panelHeight, null);
         }
     }
+    public void winner(BufferedImage img){
+        menuBackground = img;
+    }
+
 }
