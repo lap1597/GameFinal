@@ -139,7 +139,7 @@ public class GameWorld extends JPanel implements Runnable {
 
         System.out.println(gObj);
         t1 = new Player(1,100, 100, AssetManager.getAnimation("dogStand"));
-        t2 = new Player (2, 500, 500, AssetManager.getAnimation("catStand"));
+        t2 = new Player (2, 1850, 1280, AssetManager.getAnimation("catStand"));
 
         PlayerControl tc1 = new PlayerControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
         PlayerControl tc2 = new PlayerControl(t2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SHIFT);
@@ -168,20 +168,21 @@ public class GameWorld extends JPanel implements Runnable {
 
         buffer.setColor(Color.BLACK);
         buffer.fillRect(0, 0, GameConstants.GAME_SCREEN_WIDTH,GameConstants.GAME_SCREEN_HEIGHT);
-        g2.drawImage(ground, 0, 0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT,this);
+        buffer.drawImage(ground, 0, 0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT,this);
 
 
         for(GameObject gObj : this.gObj){
 
-            gObj.draw(g2);
+            gObj.draw(buffer);
         }
 
-        this.t1.drawImage(g2);
-        this.t2.drawImage(g2);
-     //   buffer.drawImage(world, 0, 0, null);
-        displayHealthBar(g2);
-        displayLiveCount(g2);
-        //buildSplitScreen(buffer);
+        this.t1.drawImage(buffer);
+        this.t2.drawImage(buffer);
+        buffer.drawImage(world, 0, 0, null);
+        displayHealthBar(buffer);
+        displayLiveCount(buffer);
+        buildSplitScreen(g2);
+        buildMiniMap(g2);
 
     }
 
@@ -215,19 +216,33 @@ public class GameWorld extends JPanel implements Runnable {
     public void addGameObject(GameObject g) {
         this.gObj.add(g);
     }
-    private void buildMiniMap(Graphics2D window){
-        double scale= 0.1;
-        BufferedImage mini = this.world.getSubimage(0,0,
-                GameConstants.WORLD_WIDTH,
-                GameConstants.WORLD_HEIGHT);
-        AffineTransform miniTransform = AffineTransform.getTranslateInstance(
-                (GameConstants.GAME_SCREEN_WIDTH/4f - GameConstants.WORLD_WIDTH*scale/2f),
-                GameConstants.GAME_SCREEN_HEIGHT/2f);
-        window.scale(scale,scale);
+private void buildMiniMap(Graphics2D window) {
+    // Define the scale of the minimap
+    double scale = 0.1;
 
-        window.drawImage(mini,miniTransform, null);
+    // Create the minimap image by scaling down the world image
+    BufferedImage mini = new BufferedImage(
+            (int) (GameConstants.WORLD_WIDTH * scale),
+            (int) (GameConstants.WORLD_HEIGHT * scale),
+            BufferedImage.TYPE_INT_RGB
+    );
+    Graphics2D miniGraphics = mini.createGraphics();
 
-    }
+    // Scale and draw the world onto the minimap
+    miniGraphics.scale(scale, scale);
+    miniGraphics.drawImage(world, 0, 0, null);
+    miniGraphics.dispose();
+
+    // Calculate the position of the minimap (centered at the bottom of the screen)
+    int miniMapWidth = mini.getWidth();
+    int miniMapHeight = mini.getHeight();
+    int xPosition = (GameConstants.GAME_SCREEN_WIDTH - miniMapWidth) / 2;
+    int yPosition = GameConstants.GAME_SCREEN_HEIGHT - miniMapHeight - 20; // Add some padding from the bottom
+
+    // Draw the minimap on the screen
+    window.drawImage(mini, xPosition, yPosition, null);
+}
+
 
     private void buildSplitScreen(Graphics window){
         BufferedImage lh = this.world.getSubimage((int)t1.getScreenX(), (int)t1.getScreenY(),
