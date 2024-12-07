@@ -1,254 +1,216 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package GameFile.game;
 
-
-import GameFile.GameConstants;
 import GameFile.Launcher;
 import GameFile.utils.AssetManager;
 import GameFile.utils.MapLoader;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import javax.swing.JPanel;
 
-/**
- * @author anthony-pc
- */
 public class GameWorld extends JPanel implements Runnable {
-
     private BufferedImage world;
     private BufferedImage ground;
     private Player t1;
     private Player t2;
     private final Launcher lf;
-    private long tick = 0;
-    List<GameObject> gObj = new ArrayList<>();
-    private BufferedImage heart1, heart2, heart3, heart4, heart5;
-   private  long t1RespawnTime = -1; // Tracks when to respawn t1 (-1 means no respawn needed)
-    private long t2RespawnTime = -1;
+    private long tick = 0L;
+    List<GameObject> gObj = new ArrayList();
+    private BufferedImage heart1;
+    private BufferedImage heart2;
+    private BufferedImage heart3;
+    private BufferedImage heart4;
+    private BufferedImage heart5;
+    private long t1RespawnTime = -1L;
+    private long t2RespawnTime = -1L;
     private BufferedImage floor;
 
-    /**
-     *
-     */
     public GameWorld(Launcher lf) {
         this.lf = lf;
     }
 
-    @Override
     public void run() {
-        resetGame();
-        try {
-            while (true) {
+        this.resetGame();
 
-                this.tick++;
-                this.t1.update(this); // update tank
+        try {
+            while(true) {
+                ++this.tick;
+                this.t1.update(this);
                 this.t2.update(this);
-                for (int i = this.gObj.size()-1; i >= 0; i--) {
-                    if(this.gObj.get(i) instanceof Tracking u) {
+
+                for(int i = this.gObj.size() - 1; i >= 0; --i) {
+                    Object var3 = this.gObj.get(i);
+                    if (var3 instanceof Tracking u) {
                         u.update(this);
                     }
                 }
+
                 this.checkCollision();
-                this.gObj.removeIf(g ->g.getHasCollided());
-                this.repaint();   // redraw game
-
-                if(t1.getLife().getCounter() == 0){
+                this.gObj.removeIf((g) -> {
+                    return g.getHasCollided();
+                });
+                this.repaint();
+                if (this.t1.getLife().getCounter() == 0) {
                     System.out.println("Cat win!");
-
                     this.lf.updateEndGamePanel(AssetManager.getSprite("catWin"));
-                    lf.setFrame("end");
-                    break;
-                }else if(t2.getLife().getCounter() == 0){
-                    System.out.println("Dog win!");
-
-                    this.lf.updateEndGamePanel(AssetManager.getSprite("dogWin"));
-                    lf.setFrame("end");
-
+                    this.lf.setFrame("end");
                     break;
                 }
 
-                /*
-                 * Sleep for 1000/144 ms (~6.9ms). This is done to have our
-                 * loop run at a fixed rate per/sec.
-                */
-                Thread.sleep(1000 / 200);
+                if (this.t2.getLife().getCounter() == 0) {
+                    System.out.println("Dog win!");
+                    this.lf.updateEndGamePanel(AssetManager.getSprite("dogWin"));
+                    this.lf.setFrame("end");
+                    break;
+                }
+
+                Thread.sleep(5L);
             }
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException var4) {
+            InterruptedException ignored = var4;
             System.out.println(ignored);
         }
+
     }
 
-    /**
-     * Reset game to its initial state.
-     */
     public void resetGame() {
-        // Reset tick counter
-        this.tick = 0;
-
-        // Clear all game objects
+        this.tick = 0L;
         this.gObj.clear();
-
-        // Reset player lives
-        t1.getLife().setCounter(3); // Reset to initial lives (example: 3 lives)
-        t2.getLife().setCounter(3);
-
-        // Reset player states
-        t1.setX(); // Reset to initial X position
-        t1.setY(); // Reset to initial Y position
-        t1.setHealth(100); // Reset health
-        t1.setSpeed(0.5f); // Reset speed
-        t1.setDamage(5);
-
-        t2.setX(); // Reset to initial X position
-        t2.setY(); // Reset to initial Y position
-        t2.setHealth(100); // Reset health
-        t2.setSpeed(0.5f); // Reset speed
-        t1.setDamage(5);
-        // Reload game objects (map, collectibles, obstacles)
+        this.t1.getLife().setCounter(3);
+        this.t2.getLife().setCounter(3);
+        this.t1.setX();
+        this.t1.setY();
+        this.t1.setHealth(100);
+        this.t1.setSpeed(0.5F);
+        this.t1.setDamage(5);
+        this.t2.setX();
+        this.t2.setY();
+        this.t2.setHealth(100);
+        this.t2.setSpeed(0.5F);
+        this.t1.setDamage(5);
         this.gObj = MapLoader.loadMapObjects("level1");
-
-        // Re-add players to the game object list
-        this.gObj.add(t1);
-        this.gObj.add(t2);
-
-        // Reset the game view, if applicable
+        this.gObj.add(this.t1);
+        this.gObj.add(this.t2);
         this.repaint();
-
-
-
-
     }
 
-
-    /**
-     * Load all resources for Tank Wars Game. Set all Game Objects to their
-     * initial state as well.
-     */
     public void InitializeGame() {
-        this.world = new BufferedImage(GameConstants.WORLD_WIDTH,
-                GameConstants.WORLD_HEIGHT,
-                BufferedImage.TYPE_INT_RGB);
-
-        this.ground = AssetManager.getSprite("bg2");
-        this.gObj = MapLoader.loadMapObjects("level2");
-
-
-        System.out.println(gObj);
-        t1 = new Player(1,100, 100, AssetManager.getAnimation("dogStand"));
-        t2 = new Player (2, 500, 500, AssetManager.getAnimation("catStand"));
-
-        PlayerControl tc1 = new PlayerControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
-        PlayerControl tc2 = new PlayerControl(t2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SHIFT);
+        this.world = new BufferedImage(2048, 1536, 1);
+        this.ground = AssetManager.getSprite("bg");
+        this.gObj = MapLoader.loadMapObjects("level1");
+        System.out.println(this.gObj);
+        this.t1 = new Player(1, 100.0F, 100.0F, AssetManager.getAnimation("dogStand"));
+        this.t2 = new Player(2, 1850.0F, 1280.0F, AssetManager.getAnimation("catStand"));
+        PlayerControl tc1 = new PlayerControl(this.t1, 87, 83, 65, 68, 32);
+        PlayerControl tc2 = new PlayerControl(this.t2, 38, 40, 37, 39, 16);
         this.lf.getJf().addKeyListener(tc1);
         this.lf.getJf().addKeyListener(tc2);
-        this.gObj.add(t1);
-        this.gObj.add(t2);
+        this.gObj.add(this.t1);
+        this.gObj.add(this.t2);
+
         try {
             Sound bgSound = AssetManager.getSound("bgSound");
-            bgSound.loopContinuously(); // Loop the sound continuously
-            bgSound.setVolume(0.5f);    // Optional: Set volume to 50%
+            bgSound.loopContinuously();
+            bgSound.setVolume(0.5F);
             System.out.println("Background sound started.");
-        } catch (Exception e) {
+        } catch (Exception var4) {
+            Exception e = var4;
             System.err.println("Failed to play background sound: " + e.getMessage());
             e.printStackTrace();
         }
 
-
     }
 
-    @Override
     public void paintComponent(Graphics g) {
-;
-        Graphics2D g2 = (Graphics2D) g;
-        Graphics2D buffer = world.createGraphics();
-
+        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D buffer = this.world.createGraphics();
         buffer.setColor(Color.BLACK);
-        buffer.fillRect(0, 0, GameConstants.GAME_SCREEN_WIDTH,GameConstants.GAME_SCREEN_HEIGHT);
-        g2.drawImage(ground, 0, 0, GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT,this);
+        buffer.fillRect(0, 0, 1280, 960);
+        buffer.drawImage(this.ground, 0, 0, 2048, 1536, this);
+        Iterator var4 = this.gObj.iterator();
 
-
-        for(GameObject gObj : this.gObj){
-
-            gObj.draw(g2);
+        while(var4.hasNext()) {
+            GameObject gObj = (GameObject)var4.next();
+            gObj.draw(buffer);
         }
 
-        this.t1.drawImage(g2);
-        this.t2.drawImage(g2);
-     //   buffer.drawImage(world, 0, 0, null);
-        displayHealthBar(g2);
-        displayLiveCount(g2);
-        //buildSplitScreen(buffer);
-
+        this.t1.drawImage(buffer);
+        this.t2.drawImage(buffer);
+        buffer.drawImage(this.world, 0, 0, (ImageObserver)null);
+        this.displayHealthBar(buffer);
+        this.displayLiveCount(buffer);
+        this.buildSplitScreen(g2);
+        this.buildMiniMap(g2);
     }
 
-    private void checkCollision(){
+    private void checkCollision() {
+        for(int i = 0; i < this.gObj.size(); ++i) {
+            GameObject obj1 = (GameObject)this.gObj.get(i);
 
-        for (int i = 0; i < this.gObj.size(); i++) {
-            GameObject obj1 = this.gObj.get(i);
-            for (int j = 0; j < this.gObj.size(); j++) {
-                if (i == j) continue; // avoid colliding with yourself
+            for(int j = 0; j < this.gObj.size(); ++j) {
+                if (i != j) {
+                    GameObject obj2;
+                    if (obj1 instanceof Player) {
+                        obj2 = (GameObject)this.gObj.get(j);
+                        if (obj1.getHitbox().intersects(obj2.getHitbox())) {
+                            obj1.handleCollision(obj2);
+                        }
+                    }
 
-                if (obj1 instanceof Player) {
-                    GameObject obj2 = this.gObj.get(j);
-                    if (obj1.getHitbox().intersects(obj2.getHitbox())) {
-
-                        obj1.handleCollision(obj2);
-
+                    if (obj1 instanceof Bullet) {
+                        obj2 = (GameObject)this.gObj.get(j);
+                        if (obj1.getHitbox().intersects(obj2.getHitbox())) {
+                            obj1.handleCollision(obj2);
+                        }
                     }
                 }
-                if(obj1 instanceof Bullet) { // to stop bullets from going past walls
-                    GameObject obj2 = this.gObj.get(j);
-
-                    if(obj1.getHitbox().intersects(obj2.getHitbox())) {
-
-                        obj1.handleCollision(obj2);
-                    }
-                }
-
             }
         }
+
     }
+
     public void addGameObject(GameObject g) {
         this.gObj.add(g);
     }
-    private void buildMiniMap(Graphics2D window){
-        double scale= 0.1;
-        BufferedImage mini = this.world.getSubimage(0,0,
-                GameConstants.WORLD_WIDTH,
-                GameConstants.WORLD_HEIGHT);
-        AffineTransform miniTransform = AffineTransform.getTranslateInstance(
-                (GameConstants.GAME_SCREEN_WIDTH/4f - GameConstants.WORLD_WIDTH*scale/2f),
-                GameConstants.GAME_SCREEN_HEIGHT/2f);
-        window.scale(scale,scale);
 
-        window.drawImage(mini,miniTransform, null);
-
+    private void buildMiniMap(Graphics2D window) {
+        double scale = 0.1;
+        BufferedImage mini = new BufferedImage((int)(2048.0 * scale), (int)(1536.0 * scale), 1);
+        Graphics2D miniGraphics = mini.createGraphics();
+        miniGraphics.scale(scale, scale);
+        miniGraphics.drawImage(this.world, 0, 0, (ImageObserver)null);
+        miniGraphics.dispose();
+        int miniMapWidth = mini.getWidth();
+        int miniMapHeight = mini.getHeight();
+        int xPosition = (1280 - miniMapWidth) / 2;
+        int yPosition = 960 - miniMapHeight - 20;
+        window.drawImage(mini, xPosition, yPosition, (ImageObserver)null);
     }
 
-    private void buildSplitScreen(Graphics window){
-        BufferedImage lh = this.world.getSubimage((int)t1.getScreenX(), (int)t1.getScreenY(),
-                (int)GameConstants.GAME_SCREEN_WIDTH/2,
-                (int)GameConstants.GAME_SCREEN_HEIGHT);
-        window.drawImage(lh, 0,0, null);
-
-        BufferedImage rh = this.world.getSubimage((int)t2.getScreenX(),(int)t2.getScreenY(),
-                (int)GameConstants.GAME_SCREEN_WIDTH/2,
-                (int)GameConstants.GAME_SCREEN_HEIGHT);
-        window.drawImage(rh,GameConstants.GAME_SCREEN_WIDTH/2,0, null);
-
+    private void buildSplitScreen(Graphics window) {
+        BufferedImage lh = this.world.getSubimage((int)this.t1.getScreenX(), (int)this.t1.getScreenY(), 640, 960);
+        window.drawImage(lh, 0, 0, (ImageObserver)null);
+        BufferedImage rh = this.world.getSubimage((int)this.t2.getScreenX(), (int)this.t2.getScreenY(), 640, 960);
+        window.drawImage(rh, 640, 0, (ImageObserver)null);
     }
 
     private void displayHealthBar(Graphics2D onScreenPanel) {
-        t1.getLife().draw(onScreenPanel, (int)t1.getX()-5, (int)t1.getY() -10);
-        t2.getLife().draw(onScreenPanel, (int)t2.getX()-5, (int)t2.getY() -10);
-    }
-    private void displayLiveCount(Graphics2D onScreenPanel) {
-        int live1 = t1.getLife().getCounter();
-        int live2 = t2.getLife().getCounter();
+        this.t1.getLife().draw(onScreenPanel, (int)this.t1.getX() - 5, (int)this.t1.getY() - 10);
+        this.t2.getLife().draw(onScreenPanel, (int)this.t2.getX() - 5, (int)this.t2.getY() - 10);
     }
 
+    private void displayLiveCount(Graphics2D onScreenPanel) {
+        int live1 = this.t1.getLife().getCounter();
+        int live2 = this.t2.getLife().getCounter();
+    }
 }
