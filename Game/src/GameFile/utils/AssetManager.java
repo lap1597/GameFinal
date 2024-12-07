@@ -39,6 +39,7 @@ public class AssetManager {
     private static void loadSprites(){
         try{
          AssetManager.sprites.put("bg", loadImage("maps/bg.png"));
+         AssetManager.sprites.put("bg2", loadImage("maps/bg2.png"));
         AssetManager.sprites.put("dog", loadImage("animations/Dog/stand/stand1.png"));
         AssetManager.sprites.put("cat", loadImage("animations/Cat/stand/cstand.png"));
         AssetManager.sprites.put("tank2", loadImage("tank/tank2.png"));
@@ -111,7 +112,8 @@ public class AssetManager {
         AssetManager.sprites.put("cow2",loadImage("wall/cow2.png"));
         AssetManager.sprites.put("pig1",loadImage("wall/pig1.png"));
         AssetManager.sprites.put("pig2",loadImage("wall/pig2.png"));
-
+        AssetManager.sprites.put("ck1", loadImage("wall/ck1.png"));
+        AssetManager.sprites.put("ck2", loadImage("wall/ck2.png"));
 
         AssetManager.sprites.put("break13", loadImage("wall/tile013.png"));
         AssetManager.sprites.put("break14", loadImage("wall/tile014.png"));

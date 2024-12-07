@@ -65,6 +65,8 @@ public abstract class GameObject {
             case "21" -> new Breakable(x,y, AssetManager.getSprite("cow2"));
             case "22" -> new Breakable(x,y, AssetManager.getSprite("pig1"));
             case "23" -> new Breakable(x,y, AssetManager.getSprite("pig2"));
+            case "24" -> new Breakable(x,y, AssetManager.getSprite("ck1"));
+            case "25" -> new Breakable(x,y, AssetManager.getSprite("ck2"));
 
             //ITEMS
             case "27"->new Damage(x,y, AssetManager.getSprite("dmg"));

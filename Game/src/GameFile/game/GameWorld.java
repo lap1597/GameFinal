@@ -133,8 +133,8 @@ public class GameWorld extends JPanel implements Runnable {
                 GameConstants.WORLD_HEIGHT,
                 BufferedImage.TYPE_INT_RGB);
 
-        this.ground = AssetManager.getSprite("bg");
-        this.gObj = MapLoader.loadMapObjects("level1");
+        this.ground = AssetManager.getSprite("bg2");
+        this.gObj = MapLoader.loadMapObjects("level2");
 
 
         System.out.println(gObj);

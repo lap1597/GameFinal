@@ -10,7 +10,8 @@ import java.util.*;
 public class MapLoader {
     private static Map<String, String> maps = new HashMap<>(){{
         put("bground","maps/background.csv");
-        put("level1","maps/Book1.csv");
+        put("level1","maps/Map1.csv");
+        put("level2","maps/Map2.csv");
 
     }};
     public static List<GameObject> loadMapObjects(final String level) {
