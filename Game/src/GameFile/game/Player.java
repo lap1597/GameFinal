@@ -144,7 +144,7 @@ public class Player extends GameObject implements Tracking {
             bX -= 35;
         }
         Sound s = AssetManager.getSound("shootSound");
-        s.setVolume(0.2f);
+        s.setVolume(0.3f);
         s.play();
         Bullet newBullet = new Bullet(bX, bY, AssetManager.getAnimation("bullt1"));
         newBullet.shoot(angle);
@@ -202,9 +202,7 @@ public class Player extends GameObject implements Tracking {
         this.gw = gw;
         boolean isMoving = false;
         if (health <= 0) {
-//           Sound lose = AssetManager.getSound("loseSound");
-//            lose.setVolume(0.5f);
-//            lose.play();
+
             if (currentAnimation != dieAnimation) {
                 currentAnimation = dieAnimation;
                 currentFrame = 0;
@@ -262,10 +260,6 @@ public class Player extends GameObject implements Tracking {
             }
         }
 
-        // Update bullets
-
-
-        // Screen centering and animation updates
         centerScreen();
         updateAnimationFrame();
 

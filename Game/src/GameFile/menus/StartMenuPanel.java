@@ -3,14 +3,9 @@ package GameFile.menus;
 import GameFile.Launcher;
 import GameFile.utils.AssetManager;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-
-import javax.swing.event.ChangeListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class StartMenuPanel extends JPanel {
 
@@ -23,24 +18,42 @@ public class StartMenuPanel extends JPanel {
         // Load the menu background image
         menuBackground = AssetManager.getSprite("menu");
 
-
         this.setBackground(Color.BLACK);
         this.setLayout(null);
+
+        // Map selection dropdown
+        String[] maps = {"level1", "level2", "level3"};
+        JComboBox<String> mapSelector = new JComboBox<>(maps);
+        mapSelector.setFont(new Font("Courier New", Font.PLAIN, 18));
+        mapSelector.setBounds(150, 150, 150, 40);
+        mapSelector.addActionListener(e -> {
+            String selectedMap = (String) mapSelector.getSelectedItem();
+            System.out.println("Selected Map: " + selectedMap);
+            lf.setSelectedMap(selectedMap); // Set the selected map in Launcher
+        });
 
         // Start button
         JButton start = new JButton("Start");
         start.setFont(new Font("Courier New", Font.BOLD, 24));
         start.setBounds(150, 200, 150, 50);
-        start.addActionListener(actionEvent -> this.lf.setFrame("game"));
+        start.addActionListener(actionEvent -> {
+            // Ensure a map is selected before starting the game
+            String selectedMap = lf.getSelectedMap();
+            if (selectedMap == null || selectedMap.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select a map before starting!", "Warning", JOptionPane.WARNING_MESSAGE);
+            } else {
+                System.out.println("Starting game with map: " + selectedMap);
+                lf.setFrame("game"); // Switch to the game frame
+            }
+        });
 
         // Exit button
         JButton exit = new JButton("Exit");
-        exit.setSize(new Dimension(200, 100));
         exit.setFont(new Font("Courier New", Font.BOLD, 24));
         exit.setBounds(150, 270, 150, 50);
-        exit.addActionListener(actionEvent -> this.lf.closeGame());
+        exit.addActionListener(actionEvent -> lf.closeGame());
 
-//        // Volume slider
+        // Volume slider
         JSlider volumeSlider = new JSlider(0, 100, 50);
         volumeSlider.setBounds(150, 400, 150, 50);
         volumeSlider.setMajorTickSpacing(25);
@@ -49,16 +62,15 @@ public class StartMenuPanel extends JPanel {
         volumeSlider.setVisible(false);
         volumeSlider.addChangeListener(e -> {
             int volume = volumeSlider.getValue();
-
             adjustVolume(volume);
         });
 
+        // Volume button
         JButton volumeButton = new JButton("Volume");
         volumeButton.setFont(new Font("Courier New", Font.BOLD, 18));
         volumeButton.setBounds(150, 350, 150, 50);
-        volumeButton.addActionListener(e -> {
-            volumeSlider.setVisible(!volumeSlider.isVisible());
-        });
+        volumeButton.addActionListener(e -> volumeSlider.setVisible(!volumeSlider.isVisible()));
+
         // Help button
         JButton helpButton = new JButton("Help");
         helpButton.setFont(new Font("Courier New", Font.BOLD, 14));
@@ -66,23 +78,24 @@ public class StartMenuPanel extends JPanel {
         helpButton.addActionListener(e -> {
             // Display instructions on how to play
             String instructions = """
-        Welcome to the Game!
-        For Dog player:
-        - Use the W,S,A,D keys to move your character Up, Down, Left, Right.
-        - Press  Spacebar to shoot and the direction will be based on your movement.
-        For Cat player:
-        - Use the arrows Up, Down, Left,Right to move your character Up, Down, Left, Right.
-        - Press Shift to shoot, and the direction will be based on your movement..
-        All: 
-        - Collect bags will increase your health, speed, and damage.
-       
-        Good luck and have fun!
-        """;
+            Welcome to the Game!
+            For Dog player:
+            - Use the W, S, A, D keys to move your character Up, Down, Left, Right.
+            - Press Spacebar to shoot. The direction will be based on your movement.
+            For Cat player:
+            - Use the arrow keys Up, Down, Left, Right to move your character.
+            - Press Shift to shoot. The direction will be based on your movement.
+            All:
+            - Collect bags to increase health, speed, and damage.
+
+            Good luck and have fun!
+            """;
             JOptionPane.showMessageDialog(this, instructions,
                     "How to Play", JOptionPane.INFORMATION_MESSAGE);
         });
 
         // Add components to the panel
+        this.add(mapSelector);
         this.add(start);
         this.add(exit);
         this.add(volumeButton);
@@ -112,6 +125,5 @@ public class StartMenuPanel extends JPanel {
             int panelHeight = this.getHeight();
             g2.drawImage(menuBackground, 0, 0, panelWidth, panelHeight, null);
         }
-
     }
 }

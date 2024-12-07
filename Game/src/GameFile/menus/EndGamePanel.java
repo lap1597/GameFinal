@@ -19,18 +19,34 @@ public class EndGamePanel extends JPanel {
 
         this.setBackground(Color.BLACK);
         this.setLayout(null);
+        String[] maps = {"level1", "level2", "level3"};
+
+        // Map selection dropdown
+        JComboBox<String> mapSelector = new JComboBox<>(maps);
+        mapSelector.setFont(new Font("Courier New", Font.PLAIN, 18));
+        mapSelector.setBounds(150, 150, 200, 40);
+        mapSelector.addActionListener(e -> {
+            String selectedMap = (String) mapSelector.getSelectedItem();
+            System.out.println("Selected Map: " + selectedMap);
+            lf.setSelectedMap(selectedMap);
+
+        });
 
         JButton start = new JButton("Restart Game");
         start.setFont(new Font("Courier New", Font.BOLD, 24));
-        start.setBounds(150, 300, 250, 50);
-        start.addActionListener((actionEvent -> this.lf.setFrame("game")));
+        start.setBounds(150, 250, 200, 50);
+        start.addActionListener((actionEvent -> {
+                lf.getSelectedMap();
+                this.lf.setFrame("game");
+        }));
 
 
         JButton exit = new JButton("Exit");
         exit.setFont(new Font("Courier New", Font.BOLD, 24));
-        exit.setBounds(150, 400, 250, 50);
+        exit.setBounds(150, 350, 200, 50);
         exit.addActionListener((actionEvent -> this.lf.closeGame()));
 
+        this.add(mapSelector);
         this.add(start);
         this.add(exit);
 

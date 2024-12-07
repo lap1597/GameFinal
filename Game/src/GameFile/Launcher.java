@@ -38,6 +38,12 @@ public class Launcher {
      */
     private CardLayout cl;
 
+    /**
+     * for maps
+     *
+     * */
+    private String selectedMap;
+
     public Launcher(){
         this.jf = new JFrame();             // creating a new JFrame object
         this.jf.setTitle("Tank Wars Game"); // setting the title of the JFrame window.
@@ -106,5 +112,12 @@ public class Launcher {
         AssetManager.loadAssets();
         (new Launcher()).initUIComponents();
 
+    }
+
+    public void setSelectedMap(String selectedMap) {
+        this.selectedMap = selectedMap;
+    }
+    public String getSelectedMap() {
+        return selectedMap;
     }
 }
